@@ -1,0 +1,49 @@
+-- Create the Employees12 table
+CREATE TABLE Employees12 (
+  Ename TEXT,               -- Employee name
+  Emil TEXT,                -- Employee email
+  Emplid INTEGER PRIMARY KEY, -- Employee ID (primary key)
+  AGE INTEGER CHECK (AGE > 0 AND AGE < 99), -- Employee age with constraints (must be between 1 and 98)
+  Hire_Date DATE,          -- Date of hiring
+  Department TEXT          -- Department of the employee
+);
+
+-- Insert data into the Employees12 table
+INSERT INTO Employees12 (Ename, Emil, Emplid, AGE, Hire_Date) 
+VALUES
+('JOHN', 'john.doe@example.com', 1, 30, '2020-01-01'),   -- Inserting first employee
+('Jane', 'jane.smith@example.com', 2, 25, '2018-06-01'), -- Inserting second employee
+('Bob', 'bob.johnson@example.com', 3, 40, '2015-03-01'), -- Inserting third employee
+('Alice', 'alice.brown@example.com', 4, 28, '2019-09-01'), -- Inserting fourth employee
+('Mike', 'mike.davis@example.com', 5, 35, '2017-01-01');   -- Inserting fifth employee
+
+-- Update the Department for all employees to 'IT'
+UPDATE Employees12 
+SET Department = 'IT';
+
+-- Select all records from the Employees12 table to verify the inserted data
+SELECT * FROM Employees12;
+
+-- Delete an employee with Emplid = 3 (Bob Johnson)
+DELETE FROM Employees12
+WHERE Emplid = 3;
+
+-- Manage transactions with savepoints to ensure data integrity
+BEGIN;                     -- Start a transaction
+SAVEPOINT BeforeUpdate;   -- Create a savepoint before making updates
+
+-- Update example: Setting a new department for employees older than 30
+UPDATE Employees12
+SET Department = 'Senior IT'
+WHERE AGE > 30;
+
+-- Rollback to the savepoint if needed (undo changes made after the savepoint)
+ROLLBACK TO SAVEPOINT BeforeUpdate;
+
+-- Commit the transaction to save changes made before the rollback point
+COMMIT;
+
+-- Select employees with age greater than the average age of all employees
+SELECT Ename 
+FROM Employees12
+WHERE AGE > (SELECT AVG(AGE) FROM Employees12);
